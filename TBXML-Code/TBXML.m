@@ -228,7 +228,7 @@
 @implementation TBXML (StaticFunctions)
 
 + (NSString*) elementName:(TBXMLElement*)aXMLElement {
-	if (nil == aXMLElement->name) return @"";
+	if (nil == aXMLElement || nil == aXMLElement->name) return @"";
 	return [NSString stringWithCString:&aXMLElement->name[0] encoding:NSUTF8StringEncoding];
 }
 
@@ -249,7 +249,7 @@
 }
 
 + (NSString*) attributeName:(TBXMLAttribute*)aXMLAttribute {
-	if (nil == aXMLAttribute->name) return @"";
+	if (nil == aXMLAttribute || nil == aXMLAttribute->name) return @"";
 	return [NSString stringWithCString:&aXMLAttribute->name[0] encoding:NSUTF8StringEncoding];
 }
 
@@ -271,7 +271,7 @@
 
 
 + (NSString*) attributeValue:(TBXMLAttribute*)aXMLAttribute {
-	if (nil == aXMLAttribute->value) return @"";
+	if (nil == aXMLAttribute || nil == aXMLAttribute->value) return @"";
 	return [NSString stringWithCString:&aXMLAttribute->value[0] encoding:NSUTF8StringEncoding];
 }
 
@@ -286,7 +286,7 @@
 }
 
 + (NSString*) textForElement:(TBXMLElement*)aXMLElement {
-	if (nil == aXMLElement->text) return @"";
+	if (nil == aXMLElement || nil == aXMLElement->text) return @"";
 	return [NSString stringWithCString:&aXMLElement->text[0] encoding:NSUTF8StringEncoding];
 }
 
