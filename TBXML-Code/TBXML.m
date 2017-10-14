@@ -228,8 +228,7 @@
 @implementation TBXML (StaticFunctions)
 
 + (NSString*) elementName:(TBXMLElement*)aXMLElement {
-	if (nil == aXMLElement || nil == aXMLElement->name) return @"";
-	return [NSString stringWithCString:&aXMLElement->name[0] encoding:NSUTF8StringEncoding];
+    return [self elementName:aXMLElement error:nil];
 }
 
 + (NSString*) elementName:(TBXMLElement*)aXMLElement error:(NSError **)error {
@@ -249,8 +248,7 @@
 }
 
 + (NSString*) attributeName:(TBXMLAttribute*)aXMLAttribute {
-	if (nil == aXMLAttribute || nil == aXMLAttribute->name) return @"";
-	return [NSString stringWithCString:&aXMLAttribute->name[0] encoding:NSUTF8StringEncoding];
+    return [self attributeName:aXMLAttribute error:nil];
 }
 
 + (NSString*) attributeName:(TBXMLAttribute*)aXMLAttribute error:(NSError **)error {
@@ -271,8 +269,7 @@
 
 
 + (NSString*) attributeValue:(TBXMLAttribute*)aXMLAttribute {
-	if (nil == aXMLAttribute || nil == aXMLAttribute->value) return @"";
-	return [NSString stringWithCString:&aXMLAttribute->value[0] encoding:NSUTF8StringEncoding];
+    return [self attributeValue:aXMLAttribute error:nil];
 }
 
 + (NSString*) attributeValue:(TBXMLAttribute*)aXMLAttribute error:(NSError **)error {
@@ -282,12 +279,17 @@
         return @"";
     }
     
+    // check for nil attribute value
+    if (nil == aXMLAttribute->value) {
+        if (error) *error = [TBXML errorWithCode:D_TBXML_ATTRIBUTE_VALUE_IS_NIL];
+        return @"";
+    }
+
 	return [NSString stringWithCString:&aXMLAttribute->value[0] encoding:NSUTF8StringEncoding];
 }
 
 + (NSString*) textForElement:(TBXMLElement*)aXMLElement {
-	if (nil == aXMLElement || nil == aXMLElement->text) return @"";
-	return [NSString stringWithCString:&aXMLElement->text[0] encoding:NSUTF8StringEncoding];
+    return [self textForElement:aXMLElement error:nil];
 }
 
 + (NSString*) textForElement:(TBXMLElement*)aXMLElement error:(NSError **)error {
@@ -307,17 +309,7 @@
 }
 
 + (NSString*) valueOfAttributeNamed:(NSString *)aName forElement:(TBXMLElement*)aXMLElement {
-	const char * name = [aName cStringUsingEncoding:NSUTF8StringEncoding];
-	NSString * value = nil;
-	TBXMLAttribute * attribute = aXMLElement->firstAttribute;
-	while (attribute) {
-		if (strlen(attribute->name) == strlen(name) && memcmp(attribute->name,name,strlen(name)) == 0) {
-			value = [NSString stringWithCString:&attribute->value[0] encoding:NSUTF8StringEncoding];
-			break;
-		}
-		attribute = attribute->next;
-	}
-	return value;
+    return [self valueOfAttributeNamed:aName forElement:aXMLElement error:nil];
 }
 
 + (NSString*) valueOfAttributeNamed:(NSString *)aName forElement:(TBXMLElement*)aXMLElement error:(NSError **)error {
@@ -359,16 +351,7 @@
 }
 
 + (TBXMLElement*) childElementNamed:(NSString*)aName parentElement:(TBXMLElement*)aParentXMLElement{
-    
-	TBXMLElement * xmlElement = aParentXMLElement->firstChild;
-	const char * name = [aName cStringUsingEncoding:NSUTF8StringEncoding];
-	while (xmlElement) {
-		if (strlen(xmlElement->name) == strlen(name) && memcmp(xmlElement->name,name,strlen(name)) == 0) {
-			return xmlElement;
-		}
-		xmlElement = xmlElement->nextSibling;
-	}
-	return nil;
+    return [self childElementNamed:aName parentElement:aParentXMLElement error:nil];
 }
 
 + (TBXMLElement*) childElementNamed:(NSString*)aName parentElement:(TBXMLElement*)aParentXMLElement error:(NSError **)error {
@@ -399,15 +382,7 @@
 }
 
 + (TBXMLElement*) nextSiblingNamed:(NSString*)aName searchFromElement:(TBXMLElement*)aXMLElement{
-	TBXMLElement * xmlElement = aXMLElement->nextSibling;
-	const char * name = [aName cStringUsingEncoding:NSUTF8StringEncoding];
-	while (xmlElement) {
-		if (strlen(xmlElement->name) == strlen(name) && memcmp(xmlElement->name,name,strlen(name)) == 0) {
-			return xmlElement;
-		}
-		xmlElement = xmlElement->nextSibling;
-	}
-	return nil;
+    return [self nextSiblingNamed:aName searchFromElement:aXMLElement error:nil];
 }
 
 + (TBXMLElement*) nextSiblingNamed:(NSString*)aName searchFromElement:(TBXMLElement*)aXMLElement error:(NSError **)error {
@@ -522,6 +497,7 @@
         case D_TBXML_ELEMENT_NAME_IS_NIL:       codeText = @"Element name is nil";                  break;
         case D_TBXML_ATTRIBUTE_IS_NIL:          codeText = @"Attribute is nil";                     break;
         case D_TBXML_ATTRIBUTE_NAME_IS_NIL:     codeText = @"Attribute name is nil";                break;
+        case D_TBXML_ATTRIBUTE_VALUE_IS_NIL:    codeText = @"Attribute value is nil";               break;
         case D_TBXML_ELEMENT_TEXT_IS_NIL:       codeText = @"Element text is nil";                  break;
         case D_TBXML_PARAM_NAME_IS_NIL:         codeText = @"Parameter name is nil";                break;
         case D_TBXML_ATTRIBUTE_NOT_FOUND:       codeText = @"Attribute not found";                  break;
