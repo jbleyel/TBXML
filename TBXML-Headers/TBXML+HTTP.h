@@ -7,6 +7,8 @@
 
 #import "TBXML.h"
 
+#if __IPHONE_OS_VERSION_MAX_ALLOWED < __IPHONE_9_0
+
 typedef void (^TBXMLAsyncRequestSuccessBlock)(NSData *,NSURLResponse *);
 typedef void (^TBXMLAsyncRequestFailureBlock)(NSData *,NSError *);
 
@@ -32,4 +34,4 @@ typedef void (^TBXMLAsyncRequestFailureBlock)(NSData *,NSError *);
 
 @end
 
-
+#endif

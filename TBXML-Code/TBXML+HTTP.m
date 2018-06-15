@@ -7,6 +7,8 @@
 
 #import "TBXML+HTTP.h"
 
+#if __IPHONE_OS_VERSION_MAX_ALLOWED < __IPHONE_9_0
+
 @implementation NSMutableURLRequest (TBXML_HTTP)
 
 
@@ -114,3 +116,6 @@
 }
 
 @end
+
+#endif
+
